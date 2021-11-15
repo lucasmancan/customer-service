@@ -1,0 +1,66 @@
+buildscript {
+  ext {
+    kotlinVersion = "1.4.32"
+    joobyVersion = "2.9.6"
+  }
+}
+
+plugins {
+  id "application"
+  id "org.jetbrains.kotlin.jvm" version "1.4.32"
+  id "io.jooby.run" version "${joobyVersion}"
+  id "io.spring.dependency-management" version "1.0.11.RELEASE"
+  id "com.google.osdetector" version "1.7.0"
+  id "com.github.johnrengelman.shadow" version "7.0.0"
+}
+
+group "app"
+version "1.0.0"
+mainClassName = "app.AppKt"
+sourceCompatibility = 1.8
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+}
+
+dependencyManagement {
+  imports {
+    mavenBom "io.jooby:jooby-bom:$joobyVersion"
+  }
+}
+
+dependencies {
+  implementation "io.jooby:jooby-netty"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+  implementation "ch.qos.logback:logback-classic"
+
+  // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+  implementation 'mysql:mysql-connector-java:8.0.27'
+  implementation "io.jooby:jooby-spring:$joobyVersion"
+  implementation "io.jooby:jooby-jackson:$joobyVersion"
+  implementation "io.jooby:jooby-hikari:$joobyVersion"
+  implementation "io.jooby:jooby-hibernate:$joobyVersion"
+
+
+
+  testImplementation "org.junit.jupiter:junit-jupiter-api"
+  testImplementation "org.junit.jupiter:junit-jupiter-engine"
+  testImplementation "io.jooby:jooby-test"
+  testImplementation "com.squareup.okhttp3:okhttp"
+}
+
+test {
+  useJUnitPlatform()
+}
+
+/** Kotlin debug information: */
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+  kotlinOptions.javaParameters = true
+}
+
+
+shadowJar {
+  mergeServiceFiles()
+}
+

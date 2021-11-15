@@ -1,0 +1,24 @@
+version : '3'
+services:
+  api:
+    container_name: customer-service
+    build: .
+    image: customer-service
+    restart: always
+    environment:
+      - TZ=America/Sao_Paulo
+    ports:
+      - "8080:8080"
+    links:
+      - "mysql_db:mysql_db"
+    depends_on:
+      - mysql_db
+
+  mysql_db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./sql:/docker-entrypoint-initdb.d/"
