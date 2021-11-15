@@ -6,9 +6,12 @@ COPY src src
 COPY conf conf
 RUN gradle shadowJar
 
-FROM adoptopenjdk/openjdk11-openj9:alpine-slim
-WORKDIR /customer-service
+
+FROM adoptopenjdk/openjdk11-openj9:ubi-minimal
+ENV AB_ENABLED=jmx_exporter
+RUN mkdir /opt/shareclasses
+RUN chmod a+rwx -R /opt/shareclasses
+RUN mkdir /opt/app
 COPY --from=build /customer-service/build/libs/customer-service-1.0.0-all.jar app.jar
-COPY conf conf
-EXPOSE 8080
-CMD ["java", "-jar", , "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Xquickstart","-Xshareclasses", "app.jar"]
+
+CMD ["java", "-XX:+IdleTuningGcOnIdle", "-Xtune:virtualized", "-Xshareclasses:cacheDir=/opt/shareclasses", "-jar", "app.jar"]
