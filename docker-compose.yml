@@ -1,27 +1,24 @@
 version : '3'
 services:
-  api:
-    container_name: customer-service
-    build: .
-    image: customer-service
-    restart: always
-    environment:
-      - TZ=America/Sao_Paulo
-    ports:
-      - "8080:8080"
-    links:
-      - "mysql_db:mysql_db"
-    depends_on:
-      - mysql_db
-    deploy:
-      resources:
-        limits:
-  #        cpus: 0.50
-          memory: 512M
-        reservations:
-   #       cpus: 0.25
-          memory: 128M
-
+#  api:
+#    container_name: customer-service-quarkus
+#    build: .
+#    image: customer-service-quarkus
+#    restart: always
+#    environment:
+#      - TZ=America/Sao_Paulo
+#    ports:
+#      - "8080:8080"
+#    links:
+#      - "mysql_db:mysql_db"
+#    depends_on:
+#      - mysql_db
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 512M
+#        reservations:
+#          memory: 128M
   mysql_db:
     image: mysql
     environment:

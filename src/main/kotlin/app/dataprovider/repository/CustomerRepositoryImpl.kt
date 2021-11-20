@@ -5,12 +5,12 @@ import app.dataprovider.repository.input.CustomerRepository
 import app.dataprovider.toEntity
 import app.dataprovider.toJpaEntity
 import app.domain.entity.Customer
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Repository
+import javax.enterprise.context.ApplicationScoped
+import javax.inject.Inject
 import javax.persistence.EntityManager
 
-@Repository
-class CustomerRepositoryImpl(@Autowired private val entityManager: EntityManager) : CustomerRepository {
+@ApplicationScoped
+class CustomerRepositoryImpl(@Inject  val entityManager: EntityManager) : CustomerRepository {
     override fun findById(id: Long): CustomerJpaEntity? {
         return entityManager.find(CustomerJpaEntity::class.java, id)
     }

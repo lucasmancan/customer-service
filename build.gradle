@@ -1,70 +1,48 @@
-buildscript {
-  ext {
-    kotlinVersion = "1.5.31"
-    joobyVersion = "2.11.0"
-  }
-  dependencies {
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
-  }
-
-}
-
 plugins {
-  id "application"
-  id "org.jetbrains.kotlin.jvm" version "${kotlinVersion}"
-  id "io.jooby.run" version "${joobyVersion}"
-  id "io.spring.dependency-management" version "1.0.11.RELEASE"
-  id "com.google.osdetector" version "1.7.0"
-  id "com.github.johnrengelman.shadow" version "7.0.0"
+  id 'org.jetbrains.kotlin.jvm' version "1.5.31"
+  id "org.jetbrains.kotlin.plugin.allopen" version "1.5.31"
+  id 'io.quarkus'
 }
-
-group "app"
-version "1.0.0"
-mainClassName = "app.AppKt"
-sourceCompatibility = 11
 
 repositories {
-  mavenLocal()
   mavenCentral()
-}
-
-dependencyManagement {
-  imports {
-    mavenBom "io.jooby:jooby-bom:$joobyVersion"
-  }
+  mavenLocal()
 }
 
 dependencies {
-
-  implementation "io.jooby:jooby-netty"
-  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-  implementation "ch.qos.logback:logback-classic"
-
-  implementation 'mysql:mysql-connector-java:8.0.27'
-  implementation "io.jooby:jooby-spring:$joobyVersion"
-  implementation "io.jooby:jooby-jackson:$joobyVersion"
-  implementation "io.jooby:jooby-hikari:$joobyVersion"
-  implementation "io.jooby:jooby-hibernate:$joobyVersion"
-
-  testImplementation "org.junit.jupiter:junit-jupiter-api"
-  testImplementation "org.junit.jupiter:junit-jupiter-engine"
-  testImplementation "io.jooby:jooby-test"
-  testImplementation "com.squareup.okhttp3:okhttp"
+  implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+  implementation 'io.quarkus:quarkus-hibernate-orm'
+  implementation 'io.quarkus:quarkus-jdbc-h2'
+  implementation 'io.quarkus:quarkus-hibernate-validator'
+  implementation 'io.quarkus:quarkus-kotlin'
+  implementation 'io.quarkus:quarkus-resteasy'
+  implementation 'io.quarkus:quarkus-resteasy-jackson'
+  implementation 'io.quarkus:quarkus-jdbc-mysql'
+  implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+  implementation 'io.quarkus:quarkus-arc'
+  testImplementation 'io.quarkus:quarkus-junit5'
+  testImplementation 'io.rest-assured:rest-assured'
 }
 
+group 'app'
+version '1.0.0-SNAPSHOT'
 
-
-
-test {
-  useJUnitPlatform()
+java {
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
 }
 
-/** Kotlin debug information: */
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+allOpen {
+  annotation("javax.ws.rs.Path")
+  annotation("javax.enterprise.context.ApplicationScoped")
+  annotation("io.quarkus.test.junit.QuarkusTest")
+}
+
+compileKotlin {
+  kotlinOptions.jvmTarget = JavaVersion.VERSION_11
   kotlinOptions.javaParameters = true
 }
 
-
-shadowJar {
-  mergeServiceFiles()
+compileTestKotlin {
+  kotlinOptions.jvmTarget = JavaVersion.VERSION_11
 }

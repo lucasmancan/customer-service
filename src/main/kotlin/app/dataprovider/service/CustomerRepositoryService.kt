@@ -5,11 +5,11 @@ import app.dataprovider.toEntity
 import app.domain.entity.Customer
 import app.domain.usecases.findcustomerbyid.output.FindCustomerByIdRepositoryPort
 import app.domain.usecases.savecustomer.output.SaveCustomerRepositoryPort
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Service
+import javax.enterprise.context.ApplicationScoped
+import javax.inject.Inject
 
-@Service
-class CustomerRepositoryService(@Autowired private val customerRepository: CustomerRepository) : FindCustomerByIdRepositoryPort, SaveCustomerRepositoryPort {
+@ApplicationScoped
+class CustomerRepositoryService(@Inject  val customerRepository: CustomerRepository) : FindCustomerByIdRepositoryPort, SaveCustomerRepositoryPort {
     override fun find(id: Long): Customer? {
         return customerRepository.findById(id)?.toEntity()
     }
