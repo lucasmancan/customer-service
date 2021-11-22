@@ -1,13 +1,27 @@
-
-
-FROM gradle:7.3.0-jdk11 as build
-WORKDIR /customer-service
-COPY build.gradle build.gradle
-COPY settings.gradle settings.gradle
-COPY src src
-RUN ./gradlew build
-
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.4
+####
+# This Dockerfile is used in order to build a container that runs the Quarkus application in JVM mode
+#
+# Before building the container image run:
+#
+# ./gradlew build
+#
+# Then, build the image with:
+#
+# docker build -f src/main/docker/Dockerfile.jvm -t quarkus/customer-service-jvm .
+#
+# Then run the container using:
+#
+# docker run -i --rm -p 8080:8080 quarkus/customer-service-jvm
+#
+# If you want to include the debug port into your docker image
+# you will have to expose the debug port (default 5005) like this :  EXPOSE 8080 5005
+#
+# Then run the container using :
+#
+# docker run -i --rm -p 8080:8080 -p 5005:5005 -e JAVA_ENABLE_DEBUG="true" quarkus/customer-service-jvm
+#
+###
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.4 
 
 ARG JAVA_PACKAGE=java-11-openjdk-headless
 ARG RUN_JAVA_VERSION=1.3.8
@@ -39,21 +53,3 @@ USER 1001
 
 ENTRYPOINT [ "/deployments/run-java.sh" ]
 
-
-# FROM gradle:7.3.0-jdk11 as build
-# WORKDIR /customer-service
-# COPY build.gradle build.gradle
-# COPY settings.gradle settings.gradle
-# COPY src src
-# COPY conf conf
-# RUN gradle shadowJar
-#
-#
-# FROM adoptopenjdk/openjdk11-openj9:ubi-minimal
-# ENV AB_ENABLED=jmx_exporter
-# RUN mkdir /opt/shareclasses
-# RUN chmod a+rwx -R /opt/shareclasses
-# RUN mkdir /opt/app
-# COPY --from=build /customer-service/build/libs/customer-service-1.0.0-all.jar app.jar
-#
-# CMD ["java", "-XX:+IdleTuningGcOnIdle", "-Xtune:virtualized", "-Xshareclasses:cacheDir=/opt/shareclasses", "-jar", "app.jar"]
